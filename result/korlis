@@ -1,0 +1,228 @@
+ 00001 RESTART = 0;
+ 00002 TITLE = 'VD.035.004 LAB1 VALVE';
+ 00003 
+ 00004 DT_MAX = 0.01;
+ 00005 DT_OUT = 0.5;
+ 00006 DT_SAV = 0.;
+ 00007 FIN_TIM = 30.;
+ 00008 APPEND_RES = 1;
+ 00009 APPEND_SAV = 1;
+ 00010 NOPTION = '2';
+ 00011 INF = 10;
+ 00012 
+ 00013 LAYOUT
+ 00014 CH1/i - BVOL_T1;
+ 00015 CH1/o - BVOL_T2;
+ 00016 CH1(11) - VAL1;
+ 00017 END
+ 00018 
+ 00019 PI      = 3.14159265358979;
+ 00020 D_pipe  = 0.05;
+ 00021 S_pipe  = PI*D_pipe**2/4.;
+ 00022 PR_pipe = PI*D_pipe;
+ 00023 N_cell  = 20;
+ 00024 DZ_cell = 4.0/N_cell;
+ 00025 P_in    = 1.1E6;
+ 00026 P_out   = 1.0E6;
+ 00027 T_flow  = 293.15;
+ 00028 G1 = 0.;
+ 00029 G2 = 0.;
+ 00030 T_current = 0.;
+ 00031 
+ 00032 CALL BVOL_T1;
+ 00033 CALL BVOL_T2;
+ 00034 CALL CH1;
+ 00035 CALL VAL1;
+ 00036 
+ 00037 SET VALVE_MOVE;
+ 00038 SET CALC;
+ 00039 
+ 00040 OUT RES;
+ 00041 
+ 00042 END
+ 00043 
+ 00044 DATA BVOL_T1
+ 00045 P    = P_in;
+ 00046 T(1) = T_flow;
+ 00047 T(2) = T_flow + 200.0;
+ 00048 VOID = 0.;
+ 00049 END
+ 00050 
+ 00051 DATA BVOL_T2
+ 00052 P    = P_out;
+ 00053 T(1) = T_flow;
+ 00054 T(2) = T_flow + 200.0;
+ 00055 VOID = 0.;
+ 00056 END
+ 00057 
+ 00058 DATA CH1
+ 00059 N          = N_cell;
+ 00060 S          = S_pipe;
+ 00061 PR         = PR_pipe;
+ 00062 DZ         = DZ_cell;
+ 00063 DH         = 0.;
+ 00064 ROU        = 1.E-6;
+ 00065 TYPE       = 0;
+ 00066 P          = P_in;
+ 00067 T(1,1:N)   = T_flow;
+ 00068 T(2,1:N)   = T_flow + 200.0;
+ 00069 VOID(1:N)  = 0.;
+ 00070 END
+ 00071 
+ 00072 DATA VAL1
+ 00073 K = 3;
+ 00074 F(1,1) = 0.0000;
+ 00075 F(2,1) = 0.0001;
+ 00076 F(3,1) = 0.0002;
+ 00077 F(1,2) = 0.5000;
+ 00078 F(2,2) = 0.5001;
+ 00079 F(3,2) = 0.5002;
+ 00080 F(1,3) = 0.9997;
+ 00081 F(2,3) = 0.9998;
+ 00082 F(3,3) = 0.9999;
+ 00083 CSI1 = 6.13;
+ 00084 CSI2 = 6.13;
+ 00085 S = 0.0;
+ 00086 END
+ 00087 
+ 00088 EVENT VALVE_MOVE
+ 00089 IF TAU <  2.0 THEN
+ 00090    S.VAL1 = 0.0;
+ 00091    CSI1.VAL1 = 5527.;
+ 00092 ENDIF
+ 00093 IF TAU >=  2.0 & TAU <  4.0 THEN
+ 00094    S.VAL1 = 0.1;
+ 00095    CSI1.VAL1 = 2960.;
+ 00096 ENDIF
+ 00097 IF TAU >=  4.0 & TAU <  6.0 THEN
+ 00098    S.VAL1 = 0.2;
+ 00099    CSI1.VAL1 = 1588.;
+ 00100 ENDIF
+ 00101 IF TAU >=  6.0 & TAU <  8.0 THEN
+ 00102    S.VAL1 = 0.3;
+ 00103    CSI1.VAL1 = 852.;
+ 00104 ENDIF
+ 00105 IF TAU >=  8.0 & TAU < 10.0 THEN
+ 00106    S.VAL1 = 0.4;
+ 00107    CSI1.VAL1 = 457.;
+ 00108 ENDIF
+ 00109 IF TAU >= 10.0 & TAU < 12.0 THEN
+ 00110    S.VAL1 = 0.5;
+ 00111    CSI1.VAL1 = 245.;
+ 00112 ENDIF
+ 00113 IF TAU >= 12.0 & TAU < 14.0 THEN
+ 00114    S.VAL1 = 0.6;
+ 00115    CSI1.VAL1 = 132.;
+ 00116 ENDIF
+ 00117 IF TAU >= 14.0 & TAU < 16.0 THEN
+ 00118    S.VAL1 = 0.7;
+ 00119    CSI1.VAL1 = 70.5;
+ 00120 ENDIF
+ 00121 IF TAU >= 16.0 & TAU < 18.0 THEN
+ 00122    S.VAL1 = 0.8;
+ 00123    CSI1.VAL1 = 37.9;
+ 00124 ENDIF
+ 00125 IF TAU >= 18.0 & TAU < 20.0 THEN
+ 00126    S.VAL1 = 0.9;
+ 00127    CSI1.VAL1 = 20.3;
+ 00128 ENDIF
+ 00129 IF TAU >= 20.0 THEN
+ 00130    S.VAL1 = 1.0;
+ 00131    CSI1.VAL1 = 10.9;
+ 00132 ENDIF
+ 00133 END
+ 00134 
+ 00135 EVENT CALC
+ 00136 G1 = "($W.CH1(1,11),1);
+ 00137 G2 = "($W.CH1(1,21),1);
+ 00138 T_current = TAU;
+ 00139 END
+ 00140 
+ 00141 OUTPUT RES
+ 00142 WRITE T_current, S.VAL1, G1, G2, P.CH1(10), P.CH1(11);
+ 00143 END
+  
+ %inf- MAIN proc. Default value of LOCAL_ERR is 1.000000000E-04
+ %inf- MAIN proc. Default value of DT_DIAG is 0.000000000E+00
+  
+ %inf- List of parameters that will be written into <korres>
+ T_CURRENT S.VAL1 G1 G2 P.CH1(10) P.CH1(11)
+  
+ %inf- NGAS = "H2O"
+  
+ %inf- List of EVENTs that will be processed at run time
+ VALVE_MOVE CALC
+  
+  
+ Usage of space: Keys, Descriptors, Notkeys, Events, Output, Layout
+ Used   space:   0.60%    1.23%     11.70%   54.00%   0.75%   4.18%
+  
+ %inf- Total number of elements in scheme is 4:
+         CH         - 1 ( 20 volumes )
+         BVOL_T     - 2
+         VAL        - 1
+       CH+COL cells - 20
+  
+  
+ %inf- WS properties type: non-spline
+  
+ Usage of space for Keys with integer work arrays:   0.60%
+ Usage of space for Keys with real work arrays:      0.61%
+ %inf- Number of single volumes  : 20
+ %inf-                  in  CHs  : 20
+ %inf-                  in COLs  : 0
+ %inf- Number of single junctions: 21
+ %inf- NOPT:  1 1 0 0 1  0 0 0 0 0  0 0 0 0 0  0 0 0 0 0
+ %inf- S2-saving full. Length = 5947
+  
+ +++++++++ Starting time
+ %inf- Problem time = 1.004796092E+00 Step = 1.000000000E-02
+ ----- No divisions of DT occured in CH-s because of "Cour > C_max"
+ ----- No divisions of DT occured in CH-s because of "DisM > D_max"
+ ----- No divisions of DT occured in CH-s because of "DEnt > DE_max"
+ CH1       : nP=5.000000000E+00 nMEPV=5.000000000E+00 kDTM=0.000000000E+00
+ ----- No divisions of DT occured in CH-s because of "DVel > DV_max"
+ %inf- Elements that forbid the increase of step
+ CH1       : nP=4.000000000E+00 nMEPVC=4.000000000E+00
+ %inf- Gen_aSt = 1.000000000E-02 N_lim = 0.000000000E+00 eS= 1.000000000E-02
+ %inf- Interval 0.000000000E+00:1.004796092E+00 Av.step =    7.228748860E-03
+       N of accepted steps 1.390000000E+02 Eff_average_step= 9.952268011E-05
+       Other:kBvg=0.000000000E+00 kTiWd=0.000000000E+00 k2g=0.000000000E+00
+             kHCS=0.000000000E+00 kCour=0.000000000E+00 Sum=0.000000000E+00
+       N_rej_step_by_MEPV = 5.000000000E+00 N_rej_steps = 5.000000000E+00
+ %inf- Escaped(+)/entered(-) mass: Ms = 1.769100913E-04
+       Initial mass (at TAU=0)   : M0 = 7.844355893E+00
+       Current mass (current TAU): Mc = 7.844178983E+00
+       (Mc + Ms - M0) / M0 = 3.736430148E-15
+       (Mc + Ms - M0) / Mc = 3.736514416E-15
+ %inf- Escaped(+)/entered(-) enthalpy: Hs = 4.077006944E+02
+       Initial enthalpy (at TAU=0)   : H0 = 6.659387875E+05
+       Current enthalpy (current TAU): Hc = 6.655310868E+05
+       (Hc + Hs - H0) / H0 = -3.769336186E-12
+       (Hc + Hs - H0) / Hc = -3.771645260E-12
+ --------- Starting time
+  
+  
+ %inf- Problem time = 3.000479609E+01 Step = 1.000000000E-02
+ ----- No divisions of DT occured in CH-s because of "Cour > C_max"
+ ----- No divisions of DT occured in CH-s because of "DisM > D_max"
+ ----- No divisions of DT occured in CH-s because of "DEnt > DE_max"
+ ----- No divisions of DT occured in CH-s because of "D_Pr > DP_max"
+ ----- No divisions of DT occured in CH-s because of "DVel > DV_max"
+ %inf- Gen_aSt = 1.000000000E-02 N_lim = 0.000000000E+00 eS= 1.000000000E-02
+ %inf- Interval 1.004796092E+00:3.000479609E+01 Av.step =    9.996552913E-03
+       N of accepted steps 2.901000000E+03 Eff_average_step= 1.000344828E-02
+       Other:kBvg=0.000000000E+00 kTiWd=0.000000000E+00 k2g=0.000000000E+00
+             kHCS=0.000000000E+00 kCour=0.000000000E+00 Sum=0.000000000E+00
+       N_rej_step_by_MEPV = 0.000000000E+00 N_rej_steps = 0.000000000E+00
+ %inf- Escaped(+)/entered(-) mass: Ms = 1.769101020E-04
+       Initial mass (at TAU=0)   : M0 = 7.844355893E+00
+       Current mass (current TAU): Mc = 7.844178983E+00
+       (Mc + Ms - M0) / M0 = 5.264969754E-14
+       (Mc + Ms - M0) / Mc = 5.265088495E-14
+ %inf- Escaped(+)/entered(-) enthalpy: Hs = 4.077003610E+02
+       Initial enthalpy (at TAU=0)   : H0 = 6.659387875E+05
+       Current enthalpy (current TAU): Hc = 6.655310872E+05
+       (Hc + Hs - H0) / H0 = -7.973784038E-12
+       (Hc + Hs - H0) / Hc = -7.978668731E-12
+ %inf- KORSAR terminated: TAU >= FIN_TIM

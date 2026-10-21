@@ -1,0 +1,7 @@
+FORMAT = 7;
+
+BEGIN
+   WRITE T_current, S.VAL1, P.CH1(10), P.CH1(11), P.CH1(12);
+END
+
+END

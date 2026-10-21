@@ -1,0 +1,143 @@
+RESTART = 0;
+TITLE = 'VD.035.004 LAB1 VALVE';
+
+DT_MAX = 0.01;
+DT_OUT = 0.5;
+DT_SAV = 0.;
+FIN_TIM = 30.;
+APPEND_RES = 1;
+APPEND_SAV = 1;
+NOPTION = '2';
+INF = 10;
+
+LAYOUT
+CH1/i - BVOL_T1;
+CH1/o - BVOL_T2;
+CH1(11) - VAL1;
+END
+
+PI      = 3.14159265358979;
+D_pipe  = 0.05;
+S_pipe  = PI*D_pipe**2/4.;
+PR_pipe = PI*D_pipe;
+N_cell  = 20;
+DZ_cell = 4.0/N_cell;
+P_in    = 1.1E6;
+P_out   = 1.0E6;
+T_flow  = 293.15;
+G1 = 0.;
+G2 = 0.;
+T_current = 0.;
+
+CALL BVOL_T1;
+CALL BVOL_T2;
+CALL CH1;
+CALL VAL1;
+
+SET VALVE_MOVE;
+SET CALC;
+
+OUT RES;
+
+END
+
+DATA BVOL_T1
+P    = P_in;
+T(1) = T_flow;
+T(2) = T_flow + 200.0;
+VOID = 0.;
+END
+
+DATA BVOL_T2
+P    = P_out;
+T(1) = T_flow;
+T(2) = T_flow + 200.0;
+VOID = 0.;
+END
+
+DATA CH1
+N          = N_cell;
+S          = S_pipe;
+PR         = PR_pipe;
+DZ         = DZ_cell;
+DH         = 0.;
+ROU        = 1.E-6;
+TYPE       = 0;
+P          = P_in;
+T(1,1:N)   = T_flow;
+T(2,1:N)   = T_flow + 200.0;
+VOID(1:N)  = 0.;
+END
+
+DATA VAL1
+K = 3;
+F(1,1) = 0.0000;
+F(2,1) = 0.0001;
+F(3,1) = 0.0002;
+F(1,2) = 0.5000;
+F(2,2) = 0.5001;
+F(3,2) = 0.5002;
+F(1,3) = 0.9997;
+F(2,3) = 0.9998;
+F(3,3) = 0.9999;
+CSI1 = 6.13;
+CSI2 = 6.13;
+S = 0.0;
+END
+
+EVENT VALVE_MOVE
+IF TAU <  2.0 THEN
+   S.VAL1 = 0.0;
+   CSI1.VAL1 = 5527.;
+ENDIF
+IF TAU >=  2.0 & TAU <  4.0 THEN
+   S.VAL1 = 0.1;
+   CSI1.VAL1 = 2960.;
+ENDIF
+IF TAU >=  4.0 & TAU <  6.0 THEN
+   S.VAL1 = 0.2;
+   CSI1.VAL1 = 1588.;
+ENDIF
+IF TAU >=  6.0 & TAU <  8.0 THEN
+   S.VAL1 = 0.3;
+   CSI1.VAL1 = 852.;
+ENDIF
+IF TAU >=  8.0 & TAU < 10.0 THEN
+   S.VAL1 = 0.4;
+   CSI1.VAL1 = 457.;
+ENDIF
+IF TAU >= 10.0 & TAU < 12.0 THEN
+   S.VAL1 = 0.5;
+   CSI1.VAL1 = 245.;
+ENDIF
+IF TAU >= 12.0 & TAU < 14.0 THEN
+   S.VAL1 = 0.6;
+   CSI1.VAL1 = 132.;
+ENDIF
+IF TAU >= 14.0 & TAU < 16.0 THEN
+   S.VAL1 = 0.7;
+   CSI1.VAL1 = 70.5;
+ENDIF
+IF TAU >= 16.0 & TAU < 18.0 THEN
+   S.VAL1 = 0.8;
+   CSI1.VAL1 = 37.9;
+ENDIF
+IF TAU >= 18.0 & TAU < 20.0 THEN
+   S.VAL1 = 0.9;
+   CSI1.VAL1 = 20.3;
+ENDIF
+IF TAU >= 20.0 THEN
+   S.VAL1 = 1.0;
+   CSI1.VAL1 = 10.9;
+ENDIF
+END
+
+EVENT CALC
+G1 = "($W.CH1(1,11),1);
+G2 = "($W.CH1(1,21),1);
+T_current = TAU;
+END
+
+OUTPUT RES
+WRITE T_current, S.VAL1, G1, G2, P.CH1(10), P.CH1(11);
+END
