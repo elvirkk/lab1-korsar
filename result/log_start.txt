@@ -1,0 +1,3 @@
+Starting KORSAR 05.11.2026 22:09:12,84  
+Source directory: task  
+Finishing KORSAR 05.11.2026 22:09:14,67  

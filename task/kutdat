@@ -1,0 +1,10 @@
+FORMAT = 7;
+
+BEGIN
+   Rho = 998.2;
+   d1 = G1 / Rho * 3600.;
+   d2 = (P.CH1(10) - P.CH1(11)) / 1.E6;
+   WRITE T_current, d1, d2, S.VAL1, P.CH1(10)/1.E6, P.CH1(11)/1.E6;
+END
+
+END

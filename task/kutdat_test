@@ -1,0 +1,10 @@
+FORMAT = 7;
+
+BEGIN
+   Rho = 998.2;
+   d1 = G1 / Rho * 3600.;
+   d2 = (P_val_in - P_val_out) / 1.E6;
+   WRITE T_current, d1, d2, P_val_in/1.E6, P_val_out/1.E6;
+END
+
+END

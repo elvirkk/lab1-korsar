@@ -1,0 +1,1 @@
+ %inf- KORSAR terminated: TAU >= FIN_TIM
